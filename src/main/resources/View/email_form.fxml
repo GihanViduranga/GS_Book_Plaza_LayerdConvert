@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="root" prefHeight="1011.0" prefWidth="1507.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.gsbp.controller.EmailFormController">
+   <children>
+      <ImageView fitHeight="1011.0" fitWidth="1507.0" layoutX="-7.0" pickOnBounds="true">
+         <image>
+            <Image url="@../Icons/email-background-images-1.jpg" />
+         </image>
+         <effect>
+            <GaussianBlur />
+         </effect>
+      </ImageView>
+      <Text layoutX="605.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Send Email" underline="true" wrappingWidth="298.974609375">
+         <font>
+            <Font name="Mongolian Baiti" size="64.0" />
+         </font>
+         <fill>
+            <LinearGradient endX="1.0" endY="0.5523809523809524" startX="1.0" startY="1.0">
+               <stops>
+                  <Stop color="#ffb900" />
+                  <Stop color="WHITE" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </fill>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <Text fill="WHITE" layoutX="424.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type Your Massage" underline="true">
+         <font>
+            <Font name="Wingdings" size="24.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <TextArea fx:id="txtMassage" layoutX="424.0" layoutY="285.0" prefHeight="368.0" prefWidth="660.0" />
+      <Text fill="WHITE" layoutX="424.0" layoutY="714.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Type Your Email" underline="true">
+         <font>
+            <Font name="Wingdings" size="24.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Text>
+      <TextField fx:id="txtEmail" layoutX="424.0" layoutY="727.0" prefHeight="27.0" prefWidth="660.0" />
+      <JFXButton buttonType="RAISED" layoutX="683.0" layoutY="817.0" onAction="#btnSendOnAction" prefHeight="32.0" prefWidth="143.0" style="-fx-background-color: #e67e22;" text="Send" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>

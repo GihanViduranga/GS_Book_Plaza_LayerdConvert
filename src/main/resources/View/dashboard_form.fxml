@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="PerentrootNode" prefHeight="1005" prefWidth="1920.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.gsbp.controller.DashboardFormController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4a69bd" height="1011.0" layoutX="-1.0" layoutY="-1.0" opacity="0.72" stroke="#4a69bd" strokeType="INSIDE" width="415.0">
+         <effect>
+            <GaussianBlur />
+         </effect>
+      </Rectangle>
+      <ImageView fitHeight="68.0" fitWidth="92.0" layoutX="22.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Icons/icons8-dashboard-100.png" />
+         </image>
+      </ImageView>
+      <AnchorPane fx:id="childRoot" layoutX="414.0" prefHeight="1011.0" prefWidth="1507.0">
+         <children>
+            <ImageView fitHeight="1011.0" fitWidth="1507.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../Icons/istockphoto-949118068-612x612.jpg" />
+               </image>
+               <effect>
+                  <GaussianBlur />
+               </effect>
+            </ImageView>
+            <ImageView fitHeight="510.0" fitWidth="597.0" layoutX="77.0" layoutY="443.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/open-uri20150119-12-2b4861.gif" />
+               </image>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </ImageView>
+            <ImageView fitHeight="648.0" fitWidth="707.0" layoutX="786.0" layoutY="-99.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/Analysis%20Digital%20Marketing.gif" />
+               </image>
+            </ImageView>
+         </children></AnchorPane>
+      <Text layoutX="101.0" layoutY="56.0" stroke="#355bbc" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 25;" text="GS Book Plaza Dashboard" textAlignment="CENTER">
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0" startX="1.0" startY="0.29999999999999993">
+               <stops>
+                  <Stop color="#0a3d62" />
+                  <Stop color="#4a69bd" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </fill>
+         <effect>
+            <DropShadow blurType="TWO_PASS_BOX" height="71.775625" radius="36.03640625" width="74.37" />
+         </effect></Text>
+      <Button layoutX="53.0" layoutY="82.0" mnemonicParsing="false" onAction="#btnCustomerOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Customer Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-customerDTO-96.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="247.0" mnemonicParsing="false" onAction="#btnEmployeeOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Employee Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-employeeDTO-100.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="330.0" mnemonicParsing="false" onAction="#btnItemOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Item Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-itemDTO-96.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="413.0" mnemonicParsing="false" onAction="#btnStockOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Stock Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-warehouse-100.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="495.0" mnemonicParsing="false" onAction="#btnSupplierOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Supplier Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-supplierDTO-100.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="98.0" layoutY="920.0" mnemonicParsing="false" onAction="#btnLogoutOnAction" prefHeight="46.0" prefWidth="218.0" style="-fx-background-color: #4a69bd; -fx-font-size: 15;" text="Log out">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="39.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-log-out-48.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="578.0" mnemonicParsing="false" onAction="#btnDeliveryOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Delivery Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-deliveryDTO-96.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="665.0" mnemonicParsing="false" onAction="#btnOrdersOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Orders Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-logistics-32.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="749.0" mnemonicParsing="false" onAction="#btnRegisterOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Register Into System" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-register-100.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="833.0" mnemonicParsing="false" onAction="#btnPaymentOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Payment Management" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-paymentDTO-96.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button layoutX="53.0" layoutY="164.0" mnemonicParsing="false" onAction="#btnEmailOnAction" prefHeight="58.0" prefWidth="308.0" style="-fx-background-color: #4a69bd; -fx-font-size: 18;" text="Send Emails" textAlignment="RIGHT">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="48.0" fitWidth="57.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../Icons/icons8-email-100.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>
