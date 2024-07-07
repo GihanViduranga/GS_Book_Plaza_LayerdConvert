@@ -42,9 +42,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 
         List<Customer> ids = new ArrayList<>();
 
-        ResultSet resultSet = SQLUtil.execute("SELECT CustomerId FROM customer");
+        ResultSet resultSet = SQLUtil.execute("SELECT * FROM customer");
         while (resultSet.next()) {
-            Customer customer = new Customer(resultSet.getString("CustomerId"),resultSet.getString("Name"),resultSet.getString("Address"),resultSet.getString("Contact"),resultSet.getString("Email"));
+            Customer customer = new Customer(
+                    resultSet.getString("CustomerId"),
+                    resultSet.getString("Name"),
+                    resultSet.getString("Address"),
+                    resultSet.getString("Contact"),
+                    resultSet.getString("Email"));
             ids.add(customer);
         }
         return ids;
@@ -100,7 +105,12 @@ public class CustomerDAOImpl implements CustomerDAO {
         return null;*/
         ResultSet rst = SQLUtil.execute("SELECT * FROM customer WHERE CustomerId = ?",customerId);
         rst.next();
-        return new Customer(customerId, rst.getString("Name"),rst.getString("Address"),rst.getString("Contact"),rst.getString("Email"));
+        return new Customer(
+                customerId,
+                rst.getString("Name"),
+                rst.getString("Address"),
+                rst.getString("Contact"),
+                rst.getString("Email"));
     }
     @Override
     public boolean save(Customer customer) throws SQLException {

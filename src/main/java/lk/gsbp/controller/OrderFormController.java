@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lk.gsbp.dao.custom.impl.CustomerDAOImpl;
 import lk.gsbp.db.DbConnection;
 import lk.gsbp.entity.Customer;
 import lk.gsbp.model.CustomerDTO;
@@ -291,7 +292,7 @@ public class OrderFormController {
         String customerId = cmbCustomerID.getValue();
 
         try {
-            Customer customer = CustomerRepo.searchByCustomerID(customerId);
+            Customer customer = new CustomerDAOImpl().searchById(customerId);
             if (customer != null) {
                 lblCustomerName.setText(customer.getName());
             }
@@ -301,18 +302,19 @@ public class OrderFormController {
     }
 
     private void setCustomerId() {
-        /*ObservableList<String> custIdList = FXCollections.observableArrayList();
+        ObservableList<String> custIdList = FXCollections.observableArrayList();
 
         try{
-            List<String> idList = CustomerRepo.getIds();
-            for (String id : idList) {
-                custIdList.add(id);
+            List<Customer> idList = new CustomerDAOImpl().getIds();
+
+            for (Customer customer : idList) {
+                custIdList.add(customer.getCustomerId());
             }
 
             cmbCustomerID.setItems(custIdList);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }*/
+        }
     }
 
     public void cmbItemIdOnAction(ActionEvent actionEvent) throws SQLException {
