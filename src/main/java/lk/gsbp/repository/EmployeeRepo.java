@@ -1,7 +1,9 @@
 package lk.gsbp.repository;
 
 
+import lk.gsbp.dao.custom.impl.EmployeeDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Employee;
 import lk.gsbp.model.EmployeeDTO;
 
 import java.sql.*;
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeRepo {
-    public static List<EmployeeDTO> getEmployees() throws SQLException {
-        String sql = "SELECT * FROM employee";
+    public static List<Employee> getEmployees() throws SQLException {
+        /*String sql = "SELECT * FROM employee";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
         ResultSet resultSet = pstm.executeQuery();
@@ -30,10 +32,12 @@ public class EmployeeRepo {
 
             employeeDTOS.add(employeeDTO);
         }
-        return employeeDTOS;
+        return employeeDTOS;*/
+        EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
+        return employeeDAO.getAll();
     }
-    public static List<String> getIds() throws SQLException {
-        String sql = "SELECT EmployeeId FROM employee";
+    public static List<Employee> getIds() throws SQLException {
+        /*String sql = "SELECT EmployeeId FROM employee";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
 
@@ -44,10 +48,12 @@ public class EmployeeRepo {
             String EmployeeId = resultSet.getNString(1);
             Ids.add(EmployeeId);
         }
-        return Ids;
+        return Ids;*/
+        EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
+        return employeeDAO.getIds();
     }
-    public static boolean update (EmployeeDTO employeeDTO) throws SQLException {
-        String sql = "UPDATE employee SET Name =?, Address =?, Contact =?, Date =?, Position =?, Salary =? WHERE EmployeeId =?";
+    public static boolean update (Employee employee) throws SQLException {
+        /*String sql = "UPDATE employee SET Name =?, Address =?, Contact =?, Date =?, Position =?, Salary =? WHERE EmployeeId =?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -60,10 +66,20 @@ public class EmployeeRepo {
         pstm.setString(6, employeeDTO.getSalary());
         pstm.setObject(7, employeeDTO.getEmployeeId());
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
+        return employeeDAO.update(new Employee(
+                employee.getName(),
+                employee.getAddress(),
+                employee.getContact(),
+                employee.getDate(),
+                employee.getPosition(),
+                employee.getSalary(),
+                employee.getEmployeeId()
+        ));
     }
     public static boolean update2 (String EmployeeId, String Name, String Address, String Contact, String Date, String Position, String Salary) throws SQLException {
-        String sql = "UPDATE employee SET Name =?, Address =?, Contact =?, Date =?, Position =?, Salary =? WHERE EmployeeId =?";
+        /*String sql = "UPDATE employee SET Name =?, Address =?, Contact =?, Date =?, Position =?, Salary =? WHERE EmployeeId =?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -76,6 +92,8 @@ public class EmployeeRepo {
         pstm.setObject(6,Salary);
         pstm.setObject(7,EmployeeId);
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
+        return employeeDAO.update2(new Employee(EmployeeId, Name, Address, Contact, Date, Position, Salary));
     }
 }

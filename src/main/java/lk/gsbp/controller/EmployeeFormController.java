@@ -14,7 +14,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.dao.DAOFactory;
+import lk.gsbp.dao.custom.impl.EmployeeDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Employee;
 import lk.gsbp.model.EmployeeDTO;
 import lk.gsbp.tm.EmployeeTm;
 import lk.gsbp.repository.EmployeeRepo;
@@ -22,6 +25,8 @@ import lk.gsbp.repository.EmployeeRepo;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
+
+import static lk.gsbp.repository.EmployeeRepo.update2;
 
 public class EmployeeFormController {
 
@@ -42,6 +47,8 @@ public class EmployeeFormController {
     public TableView tblEmployee;
     public TableColumn tblEmployeeId;
 
+    EmployeeDAOImpl employeeDAO = (EmployeeDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.EMPLOYEE);
+
     public void initialize() {
         setCellValueFactory();
         loadAllEmployees();
@@ -51,9 +58,9 @@ public class EmployeeFormController {
         ObservableList<EmployeeTm> objects = FXCollections.observableArrayList();
 
         try {
-            List<EmployeeDTO> employeeDTOList = EmployeeRepo.getEmployees();
+            List<Employee> employeeDTOList = employeeDAO.getAll();
 
-            for (EmployeeDTO employeeDTO : employeeDTOList) {
+            for (Employee employeeDTO : employeeDTOList) {
                 EmployeeTm employeeTm = new EmployeeTm(
                         employeeDTO.getEmployeeId(),
                         employeeDTO.getName(),
@@ -93,10 +100,10 @@ public class EmployeeFormController {
         String salary = txtSalary.getText();
         String position = txtPosition.getText();
 
-        String sql = "INSERT INTO employee (EmployeeId,Name,Address,Contact,Date,Position,Salary) Values(?,?,?,?,?,?,?)";
+        //String sql = "INSERT INTO employee (EmployeeId,Name,Address,Contact,Date,Position,Salary) Values(?,?,?,?,?,?,?)";
 
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
+            /*Connection connection = DbConnection.getInstance().getConnection();
             PreparedStatement pstm = connection.prepareStatement(sql);
 
             pstm.setString(1,id);
@@ -105,9 +112,10 @@ public class EmployeeFormController {
             pstm.setString(4,contact);
             pstm.setString(5,jobStartDate);
             pstm.setString(6,salary);
-            pstm.setString(7,position);
+            pstm.setString(7,position);*/
 
-            boolean isSaved = pstm.executeUpdate() > 0;
+
+            boolean isSaved = employeeDAO.save(new Employee(id,name,address,contact,jobStartDate,salary,position));
             if (isSaved){
                 new Alert(Alert.AlertType.INFORMATION, "Employee Saved Successfully").show();
                 clearFields();
@@ -147,10 +155,8 @@ public class EmployeeFormController {
         String Position = txtPosition.getText();
         String Salary = txtSalary.getText();
 
-        String sql = "UPDATE employee SET Name =?, Address =?, Contact =?, Date =?, Salary =?, Position =? WHERE EmployeeId =?";
-
         try{
-            boolean isUpdate = EmployeeRepo.update2(EmployeeId, Name, Address, Contact, Date, Position, Salary);
+            boolean isUpdate = employeeDAO.update2(new Employee(EmployeeId, Name, Address, Contact, Date, Position, Salary));
             if (isUpdate) {
                 new Alert(Alert.AlertType.INFORMATION, "Employee Updated Successfully").show();
                 clearFields();
@@ -165,15 +171,8 @@ public class EmployeeFormController {
     public void btnDeleteOnAction(ActionEvent actionEvent) {
         String Id = txtID.getText();
 
-        String sql = "DELETE FROM employee WHERE EmployeeId =?";
-
         try{
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1, Id);
-
-            boolean isDelete = pstm.executeUpdate() > 0;
+            boolean isDelete = employeeDAO.delete(Id);
             if (isDelete){
                 new Alert(Alert.AlertType.INFORMATION, "Employee Deleted Successfully").show();
             }
@@ -194,28 +193,18 @@ public class EmployeeFormController {
     public void txtEmployeeIdOnAction(ActionEvent actionEvent) throws SQLException {
         String Id = txtID.getText();
 
-        String sql = "SELECT * FROM employee WHERE EmployeeId =?";
+
 
         try{
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
+            Employee employee = employeeDAO.searchById(Id);
 
-            pstm.setString(1, Id);
-            ResultSet resultSet = pstm.executeQuery();
-            if (resultSet.next()) {
-                String Name = resultSet.getString(3);
-                String Address = resultSet.getString(4);
-                String Contact = resultSet.getString(5);
-                String Date = resultSet.getString(6);
-                String Position = resultSet.getString(7);
-                String Salary = resultSet.getString(8);
-
-                txtName.setText(Name);
-                txtAddress.setText(Address);
-                txtContact.setText(Contact);
-                txtJobStartDate.setText(Date);
-                txtSalary.setText(Salary);
-                txtPosition.setText(Position);
+            if (employee != null) {
+                txtName.setText(employee.getName());
+                txtAddress.setText(employee.getAddress());
+                txtContact.setText(employee.getContact());
+                txtJobStartDate.setText(employee.getDate());
+                txtSalary.setText(employee.getSalary());
+                txtPosition.setText(employee.getPosition());
 
             } else {
                 new Alert(Alert.AlertType.ERROR, "Employee Not Found").show();
