@@ -1,6 +1,8 @@
 package lk.gsbp.repository;
 
+import lk.gsbp.dao.custom.impl.ItemDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Item;
 import lk.gsbp.model.ItemDTO;
 import lk.gsbp.model.orderDetailsDTO;
 
@@ -12,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemRepo {
-    public static boolean update(ItemDTO itemDTO) throws SQLException {
-        String sql = "UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId =? WHERE ItemsId =?";
+    public static boolean update(Item item) throws SQLException {
+        /*String sql = "UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId =? WHERE ItemsId =?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -24,11 +26,13 @@ public class ItemRepo {
         pstm.setString(4, itemDTO.getItemsId());
         pstm.setString(5, itemDTO.getStockId());
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.update(new Item(item.getItemName(),item.getQTY(),item.getUnitPrice(),item.getItemsId(),item.getStockId()));
     }
 
     public static boolean Update2(String ItemsId, String ItemName, String QTY, String UnitPrice, String stockId) throws SQLException {
-        String sql = "UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId = ? WHERE ItemsId =?";
+        /*String sql = "UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId = ? WHERE ItemsId =?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -40,11 +44,13 @@ public class ItemRepo {
         pstm.setObject(4, ItemsId);
         pstm.setObject(5, stockId);
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.update2(new Item(ItemName,QTY,UnitPrice,ItemsId,stockId));
     }
 
-    public static List<String> getItemID() throws SQLException {
-        String sql = "SELECT * FROM Items";
+    public static List<Item> getItemID() throws SQLException {
+        /*String sql = "SELECT * FROM Items";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -56,11 +62,13 @@ public class ItemRepo {
             String ItemsId = resultSet.getString(1);
             ItemIds.add(ItemsId);
         }
-        return ItemIds;
+        return ItemIds;*/
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.getIds();
     }
 
-    public static ItemDTO searchById(String id) throws SQLException {
-        String sql = "SELECT * FROM Items WHERE ItemsId = ?";
+    public static Item searchById(String id) throws SQLException {
+        /*String sql = "SELECT * FROM Items WHERE ItemsId = ?";
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
 
         pstm.setString(1, id);
@@ -74,11 +82,13 @@ public class ItemRepo {
                     resultSet.getString(5)
             );
         }
-        return null;
+        return null;*/
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.searchById(id);
     }
 
-    public static List<ItemDTO> getAll() throws SQLException {
-        String sql = "SELECT * FROM Items";
+    public static List<Item> getAll() throws SQLException {
+        /*String sql = "SELECT * FROM Items";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
 
@@ -97,10 +107,12 @@ public class ItemRepo {
 
             itemDTOS.add(itemDTO);
         }
-        return itemDTOS;
+        return itemDTOS;*/
+        ItemDAOImpl itemDAO = new ItemDAOImpl();
+        return itemDAO.getAll();
     }
 
-    public static boolean update(List<orderDetailsDTO> odList) throws SQLException {
+    /*public static boolean update(List<orderDetailsDTO> odList) throws SQLException {
         for (orderDetailsDTO od : odList) {
             boolean isUpdateQty = updateQty(od.getItemId(), od.getQty());
             if (!isUpdateQty) {
@@ -120,9 +132,9 @@ public class ItemRepo {
         pstm.setString(2, itemCode);
 
         return pstm.executeUpdate() > 0;
-    }
+    }*/
 
-    public static String GetItemIds() throws SQLException {
+    /*public static String GetItemIds() throws SQLException {
         String sql = "SELECT ItemsId FROM items ORDER BY ItemsId DESC LIMIT 1";
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
 
@@ -133,5 +145,5 @@ public class ItemRepo {
             return ItemId;
         }
         return null;
-    }
+    }*/
 }

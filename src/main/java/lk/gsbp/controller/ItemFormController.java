@@ -13,7 +13,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.dao.custom.impl.ItemDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Item;
 import lk.gsbp.model.ItemDTO;
 import lk.gsbp.model.StockDTO;
 import lk.gsbp.tm.ItemTm;
@@ -26,6 +28,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import static lk.gsbp.repository.ItemRepo.Update2;
 
 public class ItemFormController {
 
@@ -76,14 +80,15 @@ public class ItemFormController {
         ObservableList<ItemTm> ItemList = FXCollections.observableArrayList();
 
         try {
-            List<ItemDTO> itemDTOS = ItemRepo.getAll();
+            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            List<Item> itemDTOS = itemDAO.getAll();
 
-            for (ItemDTO itemDTO : itemDTOS) {
+            for (Item item : itemDTOS) {
                 ItemTm itemTm = new ItemTm(
-                        itemDTO.getItemsId(),
-                        itemDTO.getItemName(),
-                        itemDTO.getQTY(),
-                        itemDTO.getUnitPrice()
+                        item.getItemsId(),
+                        item.getItemName(),
+                        item.getQTY(),
+                        item.getUnitPrice()
                 );
                 ItemList.add(itemTm);
                 tblItemTable.setItems(ItemList);
@@ -125,15 +130,16 @@ public class ItemFormController {
         void btnDeleteOnAction(ActionEvent event) {
             String id = txtId.getText();
 
-            String sql = "DELETE FROM Items WHERE ItemsId =?";
+            //String sql = "DELETE FROM Items WHERE ItemsId =?";
 
             try {
-                Connection connection = DbConnection.getInstance().getConnection();
+                /*Connection connection = DbConnection.getInstance().getConnection();
                 PreparedStatement pstm = connection.prepareStatement(sql);
 
-                pstm.setString(1,id);
+                pstm.setString(1,id);*/
 
-                boolean isDeleted = pstm.executeUpdate() > 0;
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                boolean isDeleted = itemDAO.delete(id);
                 if (isDeleted){
                     new Alert(Alert.AlertType.INFORMATION, "Item Deleted Successfully").show();
                     ClearFields();
@@ -153,20 +159,21 @@ public class ItemFormController {
             String price = txtPrice.getText();
             String stockId = cmbStocId.getSelectionModel().getSelectedItem();
 
-            String sql = "INSERT INTO Items (ItemsId,ItemName,QTY,UnitPrice,StockId) VALUES(?,?,?,?,?)";
+           /* String sql = "INSERT INTO Items (ItemsId,ItemName,QTY,UnitPrice,StockId) VALUES(?,?,?,?,?)";*/
 
             try{
-                Connection connection = DbConnection.getInstance().getConnection();
-                PreparedStatement pstm = connection.prepareStatement(sql);
+                /*Connection connection = DbConnection.getInstance().getConnection();
+                PreparedStatement pstm = connection.prepareStatement(sql);*/
 
-                pstm.setString(1,id);
+                /*pstm.setString(1,id);
                 pstm.setString(2,name);
                 pstm.setString(3,qty);
                 pstm.setString(4,price);
-                pstm.setString(5,stockId);
+                pstm.setString(5,stockId);*/
 
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
 
-                boolean isSaved = pstm.executeUpdate() > 0;
+                boolean isSaved = itemDAO.save(new Item(id,qty,name,price,stockId));
                 if (isSaved){
                     new Alert(Alert.AlertType.INFORMATION, "Item Saved Successfully").show();
                     ClearFields();
@@ -194,7 +201,8 @@ public class ItemFormController {
             String sql = "UPDATE items SET ItemName =?, QTY =?, UnitPrice =? WHERE ItemsId =?";
 
             try {
-                boolean isUpdate = ItemRepo.Update2(Id, Name, Qty, Price,stockId);
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                boolean isUpdate = itemDAO.update2(new Item(Id, Name, Qty, Price,stockId));
                 if (isUpdate) {
                     new Alert(Alert.AlertType.INFORMATION, "Item updated").show();
                 } else {
@@ -210,23 +218,30 @@ public class ItemFormController {
         void txtItemSearchOnAction(ActionEvent event) {
             String id = txtId.getText();
 
-            String sql = "SELECT * FROM Items WHERE ItemsId =?";
+            //String sql = "SELECT * FROM Items WHERE ItemsId =?";
 
             try {
-                Connection connection = DbConnection.getInstance().getConnection();
+                /*Connection connection = DbConnection.getInstance().getConnection();
                 PreparedStatement pstm = connection.prepareStatement(sql);
 
                 pstm.setString(1, id);
 
-                ResultSet resultSet = pstm.executeQuery();
-                if (resultSet.next()) {
-                    String name = resultSet.getString(2);
+                ResultSet resultSet = pstm.executeQuery();*/
+
+                ItemDAOImpl itemDAO = new ItemDAOImpl();
+                Item item = itemDAO.searchById(id);
+                if (item != null) {
+                    txtName.setText(item.getItemName());
+                    txtQTY.setText(item.getQTY());
+                    txtPrice.setText(item.getUnitPrice());
+
+                    /*String name = resultSet.getString(2);
                     String qty = resultSet.getString(3);
                     String price = resultSet.getString(4);
 
                     txtName.setText(name);
                     txtQTY.setText(qty);
-                    txtPrice.setText(price);
+                    txtPrice.setText(price);*/
                 } else {
                     new Alert(Alert.AlertType.ERROR, "Item not found").show();
                 }
@@ -285,7 +300,8 @@ public class ItemFormController {
 
     private void getCurrentOrderId() {
         try {
-            String itemId = ItemRepo.GetItemIds();
+            ItemDAOImpl itemDAO = new ItemDAOImpl();
+            String itemId = itemDAO.GetItemIds();
 
             String nextItemId = generateNextAssestId();
             txtId.setText(nextItemId);
