@@ -14,7 +14,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.EmployeeBO;
 import lk.gsbp.dao.DAOFactory;
+import lk.gsbp.dao.custom.EmployeeDAO;
 import lk.gsbp.dao.custom.impl.EmployeeDAOImpl;
 import lk.gsbp.db.DbConnection;
 import lk.gsbp.entity.Employee;
@@ -47,7 +50,7 @@ public class EmployeeFormController {
     public TableView tblEmployee;
     public TableColumn tblEmployeeId;
 
-    EmployeeDAOImpl employeeDAO = (EmployeeDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.EMPLOYEE);
+    EmployeeBO employeeBO = (EmployeeBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.EMPLOYEE);
 
     public void initialize() {
         setCellValueFactory();
@@ -58,9 +61,9 @@ public class EmployeeFormController {
         ObservableList<EmployeeTm> objects = FXCollections.observableArrayList();
 
         try {
-            List<Employee> employeeDTOList = employeeDAO.getAll();
+            List<EmployeeDTO> employeeDTOList = employeeBO.getAll();
 
-            for (Employee employeeDTO : employeeDTOList) {
+            for (EmployeeDTO employeeDTO : employeeDTOList) {
                 EmployeeTm employeeTm = new EmployeeTm(
                         employeeDTO.getEmployeeId(),
                         employeeDTO.getName(),
@@ -100,22 +103,8 @@ public class EmployeeFormController {
         String salary = txtSalary.getText();
         String position = txtPosition.getText();
 
-        //String sql = "INSERT INTO employee (EmployeeId,Name,Address,Contact,Date,Position,Salary) Values(?,?,?,?,?,?,?)";
-
         try {
-            /*Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,id);
-            pstm.setString(2,name);
-            pstm.setString(3,address);
-            pstm.setString(4,contact);
-            pstm.setString(5,jobStartDate);
-            pstm.setString(6,salary);
-            pstm.setString(7,position);*/
-
-
-            boolean isSaved = employeeDAO.save(new Employee(id,name,address,contact,jobStartDate,salary,position));
+            boolean isSaved = employeeBO.save(new EmployeeDTO(id,name,address,contact,jobStartDate,salary,position));
             if (isSaved){
                 new Alert(Alert.AlertType.INFORMATION, "Employee Saved Successfully").show();
                 clearFields();
@@ -156,7 +145,7 @@ public class EmployeeFormController {
         String Salary = txtSalary.getText();
 
         try{
-            boolean isUpdate = employeeDAO.update2(new Employee(EmployeeId, Name, Address, Contact, Date, Position, Salary));
+            boolean isUpdate = employeeBO.update2(new EmployeeDTO(EmployeeId, Name, Address, Contact, Date, Position, Salary));
             if (isUpdate) {
                 new Alert(Alert.AlertType.INFORMATION, "Employee Updated Successfully").show();
                 clearFields();
@@ -172,7 +161,7 @@ public class EmployeeFormController {
         String Id = txtID.getText();
 
         try{
-            boolean isDelete = employeeDAO.delete(Id);
+            boolean isDelete = employeeBO.delete(Id);
             if (isDelete){
                 new Alert(Alert.AlertType.INFORMATION, "Employee Deleted Successfully").show();
             }
@@ -196,7 +185,7 @@ public class EmployeeFormController {
 
 
         try{
-            Employee employee = employeeDAO.searchById(Id);
+            EmployeeDTO employee = employeeBO.searchById(Id);
 
             if (employee != null) {
                 txtName.setText(employee.getName());

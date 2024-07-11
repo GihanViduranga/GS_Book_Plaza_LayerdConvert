@@ -38,7 +38,7 @@ public class CustomerFormController {
     public TableColumn colContact;
     public TableColumn colEmail;
 
-    CustomerDAOImpl customerDAO = (CustomerDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.CUSTOMER);
+
     CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
 
     public void btnCusSaveOnAction(ActionEvent actionEvent) {
@@ -49,18 +49,8 @@ public class CustomerFormController {
             String contact = txtCustomerContact.getText();
             String email = txtCustomerEmail.getText();
 
-            /*String sql = "INSERT INTO customer Values(?,?,?,?,?)";*/
 
             try {
-                /*Connection connection = DbConnection.getInstance().getConnection();
-                PreparedStatement pstm = connection.prepareStatement(sql);
-
-                pstm.setString(1, id);
-                pstm.setString(2, name);
-                pstm.setString(3, address);
-                pstm.setString(4, contact);
-                pstm.setString(5, email);*/
-
 
                 boolean isSaved = customerBO.saveCustomer(new CustomerDTO(id, name, address, contact, email));
                 if (isSaved) {
@@ -133,7 +123,6 @@ public class CustomerFormController {
         String Contact = txtCustomerContact.getText();
         String Email = txtCustomerEmail.getText();
 
-        /*String sql = "UPDATE customer SET Name =?, Address =?, Contact =?, Email =? WHERE CustomerId =?";*/
 
        try {
            boolean isUpdate = customerBO.updateCustomer(new CustomerDTO(CustomerId, Name, Address, Contact, Email));
@@ -150,14 +139,7 @@ public class CustomerFormController {
     public void btnCusDeleteOnAction(ActionEvent actionEvent) {
         String id = txtCustomerId.getText();
 
-        /*String sql = "DELETE FROM customer WHERE CustomerId =?";*/
-
         try {
-            /*Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,id);*/
-
 
             boolean isDeleted = customerBO.deleteCustomer(id);
             if (isDeleted) {
@@ -172,11 +154,8 @@ public class CustomerFormController {
     public void txtSearchOnAction(ActionEvent actionEvent) {
         String id = txtCustomerId.getText();
 
-       /* String sql = "SELECT * FROM customer WHERE CustomerId =?";*/
-
         try {
-            //System.out.println(id);
-            Customer customer = customerBO.searchByCustomerId(id);
+            CustomerDTO customer = customerBO.searchByCustomerId(id);
 
             if (customer != null){
                 txtCustomerName.setText(customer.getName());

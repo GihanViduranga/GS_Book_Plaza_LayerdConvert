@@ -14,7 +14,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.DeliveryBO;
+import lk.gsbp.dao.DAOFactory;
+import lk.gsbp.dao.custom.impl.DeliveryDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Delivery;
 import lk.gsbp.model.DeliveryDTO;
 import lk.gsbp.tm.DeliveryTm;
 import lk.gsbp.repository.DeliveryRepo;
@@ -41,6 +46,8 @@ public class DeliveryFormController {
     public TextField txtDeliverName;
     public TableColumn tblDeliverName;
 
+    DeliveryBO deliveryBO = (DeliveryBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.DELIVERY);
+
     public void btnSaveOnAction(ActionEvent actionEvent) throws SQLException {
         if (isValied()) {
             String Id = txtDeliveryId.getText();
@@ -49,19 +56,9 @@ public class DeliveryFormController {
             String Address = txtAddress.getText();
             String Status = txtStatus.getText();
 
-            String sql = "INSERT INTO Delivery VALUES (?,?,?,?,?)";
 
             try {
-                Connection connection = DbConnection.getInstance().getConnection();
-                PreparedStatement pstm = connection.prepareStatement(sql);
-
-                pstm.setString(1, Id);
-                pstm.setString(2, Deliver);
-                pstm.setString(3, Date);
-                pstm.setString(4, Address);
-                pstm.setString(5, Status);
-
-                boolean isSaved = pstm.executeUpdate() > 0;
+            boolean isSaved = deliveryBO.save(new DeliveryDTO(Id, Deliver, Date, Address, Status));
                 if (isSaved) {
                     new Alert(Alert.AlertType.INFORMATION, "Delivery Saved Successfully").show();
                     clearFields();
@@ -86,7 +83,7 @@ public class DeliveryFormController {
         ObservableList<DeliveryTm> objects = FXCollections.observableArrayList();
 
         try{
-            List<DeliveryDTO> deliveryDTOList = DeliveryRepo.getAllDelivery();
+            List<DeliveryDTO> deliveryDTOList = deliveryBO.getAll();
 
             for (DeliveryDTO deliveryDTO : deliveryDTOList) {
                 DeliveryTm deliveryTm = new DeliveryTm(
@@ -131,10 +128,8 @@ public class DeliveryFormController {
         String Address = txtAddress.getText();
         String Stetus = txtStatus.getText();
 
-        String sql = "UPDATE Delivery SET DeliverName = ?, Date =?, Address =?, Stetus =? WHERE DeliveryId =?";
-
         try{
-            boolean isUpdate = DeliveryRepo.update2(DeliveryId, DeliverName, Date, Address, Stetus);
+            boolean isUpdate = deliveryBO.update2(new DeliveryDTO(DeliveryId, DeliverName, Date, Address, Stetus));
             if (isUpdate) {
                 new Alert(Alert.AlertType.INFORMATION, "Delivery Updated Successfully").show();
                 clearFields();
@@ -149,15 +144,8 @@ public class DeliveryFormController {
     public void btnDeleteOnAction(ActionEvent actionEvent) throws SQLException {
         String DeliveryId = txtDeliveryId.getText();
 
-        String sql = "DELETE FROM Delivery WHERE DeliveryId =?";
-
         try{
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1, DeliveryId);
-
-            boolean isDelete = pstm.executeUpdate() > 0;
+            boolean isDelete = deliveryBO.delete(DeliveryId);
             if (isDelete) {
                 new Alert(Alert.AlertType.INFORMATION, "Delivery Deleted Successfully").show();
                 clearFields();
@@ -167,37 +155,16 @@ public class DeliveryFormController {
         }
     }
 
-    public void btnBackOnAction(ActionEvent actionEvent) throws IOException {
-        AnchorPane rootNode = FXMLLoader.load(getClass().getResource("/View/dashboard_form.fxml"));
-        Stage stage = (Stage) deliveryRootNode.getScene().getWindow();
-
-        stage.setScene(new Scene(rootNode));
-        stage.setTitle("Gs Book Plaza Dashboard");
-        stage.centerOnScreen();
-    }
-
     public void txtDeliverySearchOnAction(ActionEvent actionEvent) throws SQLException {
         String DeliveryId = txtDeliveryId.getText();
 
-        String sql = "SELECT * FROM Delivery WHERE DeliveryId =?";
-
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1, DeliveryId);
-
-            ResultSet resultSet = pstm.executeQuery();
-            if (resultSet.next()) {
-                String DeliverName = resultSet.getString(2);
-                String Date = resultSet.getString(3);
-                String Address = resultSet.getString(4);
-                String Status = resultSet.getString(5);
-
-                txtDeliverName.setText(DeliverName);
-                txtDate.setText(Date);
-                txtAddress.setText(Address);
-                txtStatus.setText(Status);
+            DeliveryDTO delivery = deliveryBO.searchById(DeliveryId);
+            if (delivery != null) {
+                txtDeliverName.setText(delivery.getDeliverName());
+                txtDate.setText(delivery.getDate());
+                txtAddress.setText(delivery.getAddress());
+                txtStatus.setText(delivery.getStetus());
             } else {
                 new Alert(Alert.AlertType.ERROR, "Delivery Not Found").show();
             }

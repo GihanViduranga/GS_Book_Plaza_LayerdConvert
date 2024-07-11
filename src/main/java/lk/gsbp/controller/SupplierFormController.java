@@ -1,137 +1,88 @@
 package lk.gsbp.controller;
 
-import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import lk.gsbp.db.DbConnection;
-import lk.gsbp.model.StockDTO;
-import lk.gsbp.model.stockDetailsDTO;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.SupplierBO;
+import lk.gsbp.dao.DAOFactory;
+import lk.gsbp.dao.custom.SupplierDAO;
+import lk.gsbp.dao.custom.impl.SupplierDAOImpl;
+import lk.gsbp.entity.Supplier;
+import lk.gsbp.model.SupplierDTO;
 import lk.gsbp.tm.SupplierTm;
-import lk.gsbp.repository.*;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+//import static sun.security.krb5.internal.crypto.KeyUsage.isValid;
 
 public class SupplierFormController {
+    public TextField txtSupplierID;
+    public TextField txtSupplierName;
+    public TextField txtContact;
+    public TextField txtProduct;
+    public TableView tblSupplier;
 
-    @FXML
     public TextField txtItemName;
-    @FXML
     public TextField txtQTY;
-    @FXML
-    public Label lblStockId;
-
-    @FXML
-    public TableColumn tblQTY;
-    @FXML
-    public TableColumn tblStockID;
-    public TableColumn tblItemPrice;
     public Label lblNetTotal;
-    public TextField txtItemPrice;
+    public AnchorPane SupplierRootNode;
+    public TableColumn<?,?> colSupplierID;
+    public TableColumn<?,?> colSupplierName;
+    public TableColumn<?,?> colContact;
+    public TableColumn<?,?> colProduct;
+    public TableColumn<?,?> colQTY;
 
-    @FXML
-    private AnchorPane SupplierRootNode;
+   // SupplierBO supplierBO = (SupplierBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.SUPPLIER);
+    SupplierDAO supplierBO = (SupplierDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.SUPPLIER);
+    public void txtSupplierSearchOnAction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        String id = txtSupplierID.getText();
 
-    @FXML
-    private TextField txtSupplierID;
+        Supplier supplier = supplierBO.searchById(id);
 
-    @FXML
-    private TextField txtSupplierName;
-
-    @FXML
-    private TextField txtContact;
-
-    @FXML
-    private TextField txtProduct;
-
-    @FXML
-    private TableView<SupplierTm> tblSupplier;
-
-    @FXML
-    private TableColumn<?, ?> tblSupplierID;
-
-    @FXML
-    private TableColumn<?, ?> tblSupplierName;
-
-    @FXML
-    private TableColumn<?, ?> tblContact;
-
-    @FXML
-    private TableColumn<?, ?> tblProduct;
-    @FXML
-    private TableColumn<?,?> tblAction;
-
-    private ObservableList<SupplierTm> stList = FXCollections.observableArrayList();
-
-
-    public void initialize() {
-        setCellValueFactory();
-        loadAllSuppliers();
-        //getCurrentOrderId();
+        if (supplier!= null){
+            txtSupplierID.setText(supplier.getSupplierId());
+            txtSupplierName.setText(supplier.getSuppName());
+            txtContact.setText(supplier.getContact());
+            txtProduct.setText(supplier.getProduct());
+            txtItemName.setText(supplier.getItemName());
+            txtQTY.setText(supplier.getQty());
+        }else {
+            new Alert(Alert.AlertType.ERROR, "Supplier not found").show();
+        }
     }
 
-    private void loadAllSuppliers() {
-        /*ObservableList<SupplierTm> SupplierList = FXCollections.observableArrayList();
+    public void btnSaveOnAction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        String SupplierId = txtSupplierID.getText();
+        String  SuppName= txtSupplierName.getText();
+        String Contact = txtContact.getText();
+        String Product = txtProduct.getText();
+        String ItemName = txtItemName.getText();
+        String Qty = txtQTY.getText();
 
-        try {
-            List<Supplier> supplierList = SupplierRepo.getAll();
+        if (isValid()){
+            Supplier supplier = new Supplier(SupplierId,SuppName,Contact,Product,ItemName,Qty);
 
-            for (Supplier supplier : supplierList) {
-                SupplierTm supplierTm = new SupplierTm(
-                    supplier.getSupplierId(),
-                    supplier.getSuppName(),
-                    supplier.getContact(),
-                    supplier.getProduct(),
-                    supplier.getQty(),
-                    supplier.
-                );
-                SupplierList.add(supplierTm);
-                tblSupplier.setItems(SupplierList);
+            boolean isSaved = supplierBO.save(supplier);
+
+            if (isSaved){
+                new Alert(Alert.AlertType.INFORMATION, "Supplier saved successfully").show();
+                initialize();
+            }else {
+                new Alert(Alert.AlertType.ERROR, "Supplier Not saved").show();
             }
-            } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }*/
+        }
     }
 
-    private void setCellValueFactory() {
-        tblSupplierID.setCellValueFactory(new PropertyValueFactory<>("supplierId"));
-        tblSupplierName.setCellValueFactory(new PropertyValueFactory<>("supplierName"));
-        tblContact.setCellValueFactory(new PropertyValueFactory<>("contact"));
-        tblProduct.setCellValueFactory(new PropertyValueFactory<>("product"));
-        tblQTY.setCellValueFactory(new PropertyValueFactory<>("QTY"));
+    private boolean isValid() {
+        return true;
     }
 
-    @FXML
-    void btnBackOnAction(ActionEvent event) throws IOException {
-        AnchorPane rootNode = FXMLLoader.load(getClass().getResource("/View/dashboard_form.fxml"));
-        Stage stage = (Stage) SupplierRootNode.getScene().getWindow();
-
-        stage.setScene(new Scene(rootNode));
-        stage.setTitle("Gs Book Plaza Dashboard");
-        stage.centerOnScreen();
-    }
-
-    @FXML
-    void btnClearOnAction(ActionEvent event) {
-        ClearFields();
-    }
-
-    private void ClearFields() {
+    public void btnClearOnAction(ActionEvent actionEvent) {
         txtSupplierID.setText("");
         txtSupplierName.setText("");
         txtContact.setText("");
@@ -140,258 +91,115 @@ public class SupplierFormController {
         txtQTY.setText("");
     }
 
-    @FXML
-    void btnDeleteOnAction(ActionEvent event) throws SQLException {
-        String Id = txtSupplierID.getText();
-
-        String sql = "DELETE FROM supplier WHERE SupplierId =?";
-
-        try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,Id);
-
-            boolean isDeleted = pstm.executeUpdate() > 0;
-            if (isDeleted){
-                new Alert(Alert.AlertType.INFORMATION, "Supplier Deleted Successfully").show();
-            }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-        }
-    }
-
-    @FXML
-    void btnNewOnAction(ActionEvent event)  {
-        AnchorPane anchorPane = null;
-        try {
-            anchorPane = FXMLLoader.load(getClass().getResource("/View/stock_form.fxml"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Scene scene = new Scene(anchorPane);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-
-        stage.setTitle("Supplier Form");
-        stage.show();
-    }
-
-    @FXML
-    void btnSaveOnAction(ActionEvent event) throws SQLException {
-        String supplierID = txtSupplierID.getText();
-        String supplierName = txtSupplierName.getText();
-        String contact = txtContact.getText();
-        String product = txtProduct.getText();
-        String itemName = txtItemName.getText();
-        String qty = txtQTY.getText();
-
-        String sql = "INSERT INTO supplier Values(?,?,?,?,?,?)";
-
-        try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,supplierID);
-            pstm.setString(2,supplierName);
-            pstm.setString(3,contact);
-            pstm.setString(4,product);
-            pstm.setString(5,itemName);
-            pstm.setString(6,qty);
-
-            boolean isSaved = pstm.executeUpdate() > 0;
-            if (isSaved){
-                initialize();
-                new Alert(Alert.AlertType.INFORMATION, "Supplier Saved Successfully").show();
-            }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-        }
-
-
-    }
-
-    @FXML
-    void btnUpdateOnAction(ActionEvent event) {
+    public void btnUpdateOnAction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
         String SupplierId = txtSupplierID.getText();
-        String Name = txtSupplierName.getText();
+        String SuppName= txtSupplierName.getText();
         String Contact = txtContact.getText();
         String Product = txtProduct.getText();
-        String itemName = txtItemName.getText();
-        String qty = txtQTY.getText();
+        String ItemName = txtItemName.getText();
+        String Qty = txtQTY.getText();
 
-        String sql = "UPDATE supplier SET SupplierName =?, Contact =?, Product =?, DeliveryTerms =?, SupplierRating =? WHERE SupplierId =?";
+        if (isValid()){
+            Supplier supplier = new Supplier(SupplierId,SuppName,Contact,Product,ItemName, Qty);
 
-        try {
-            boolean isUpdate = SupplierRepo.update2(SupplierId, Name, Contact, Product, itemName, qty);
-            if (isUpdate) {
-                new Alert(Alert.AlertType.INFORMATION, "Supplier Updated Successfully").show();
+            boolean isUpdated = supplierBO.update(supplier);
+
+            if (isUpdated){
+                new Alert(Alert.AlertType.INFORMATION, "Supplier updated successfully").show();
+                initialize();
             }else {
-                new Alert(Alert.AlertType.ERROR, "Supplier Not Updated").show();
+                new Alert(Alert.AlertType.ERROR, "Supplier Not updated").show();
             }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-        }
-    }
-    @FXML
-    void txtSupplierSearchOnAction(ActionEvent event) throws SQLException {
-        String id = txtSupplierID.getText();
-
-        String sql = "SELECT * FROM supplier WHERE SupplierId =?";
-
-        try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,id);
-
-            ResultSet resultSet = pstm.executeQuery();
-            if (resultSet.next()) {
-                String name = resultSet.getString(2);
-                String Contact = resultSet.getString(3);
-                String Product = resultSet.getString(4);
-                String itemName = resultSet.getString(5);
-                String qty = resultSet.getString(6);
-
-                txtSupplierName.setText(name);
-                txtContact.setText(Contact);
-                txtProduct.setText(Product);
-                txtItemName.setText(itemName);
-                txtQTY.setText(qty);
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Supplier Not Found").show();
-            }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.INFORMATION,"Supplier ID Not Found!").show();
         }
     }
 
+    public void btnDeleteOnAction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        String SupplierId = txtSupplierID.getText();
 
-    /*private void getCurrentOrderId() {
+        boolean isDeleted = supplierBO.delete(SupplierId);
+
+        if (isDeleted){
+            new Alert(Alert.AlertType.INFORMATION, "Supplier deleted successfully").show();
+            initialize();
+        }else {
+            new Alert(Alert.AlertType.ERROR, "Supplier Not deleted").show();
+        }
+    }
+
+    public void initialize(){
+        getCurrentSupplierId();
+        setCellValueFactory();
+        loadAllSupplier();
+    }
+
+    private void loadAllSupplier() {
+        ObservableList<SupplierTm> objects = FXCollections.observableArrayList();
+
         try {
-            String stockId = StockRepo.GetStockId();
 
-            String nextStockID = generateNextAssestId();
-            lblStockId.setText(nextStockID);
+            List<Supplier> supplierList = supplierBO.getAll();
+            for (Supplier supplier : supplierList) {
+                SupplierTm tm = new SupplierTm(
+                        supplier.getSupplierId(),
+                        supplier.getSuppName(),
+                        supplier.getContact(),
+                        supplier.getProduct(),
+                        supplier.getQty()
+                );
+
+                objects.add(tm);
+            }
+
+            tblSupplier.setItems(objects);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    public static String generateNextAssestId() throws SQLException {
-        Connection con = DbConnection.getInstance().getConnection();
 
-        String sql = "SELECT StockId FROM stock ORDER BY StockId DESC LIMIT 1";
-
-        ResultSet resultSet = con.createStatement().executeQuery(sql);
-        if(resultSet.next()) {
-            return splitStockID(resultSet.getString(1));
-        }
-        return splitStockID(null);
+    private void setCellValueFactory() {
+        colSupplierID.setCellValueFactory(new PropertyValueFactory<>("SupplierId"));
+        colSupplierName.setCellValueFactory(new PropertyValueFactory<>("SupplierName"));
+        colContact.setCellValueFactory(new PropertyValueFactory<>("Contact"));
+        colProduct.setCellValueFactory(new PropertyValueFactory<>("Product"));
+        colQTY.setCellValueFactory(new PropertyValueFactory<>("QTY"));
     }
 
-    private static String splitStockID(String string) {
-        if(string != null) {
+    private String getCurrentSupplierId() {
+        try {
+            String SupplierId = supplierBO.getCurrentSupId();
+
+            String nextSupplierId = generateNextAssestId();
+            txtSupplierID.setText(nextSupplierId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private String generateNextAssestId() throws SQLException, ClassNotFoundException {
+        return supplierBO.generateNewSupplierID();
+    }
+
+    public static String splitCustomerId(String string) {
+        if (string != null) {
             String[] strings = string.split("S0");
             int id = Integer.parseInt(strings[1]);
             id++;
             String ID = String.valueOf(id);
             int length = ID.length();
-            if (length < 2){
-                return "S00"+id;
-            }else {
-                if (length < 3){
-                    return "S0"+id;
-                }else {
-                    return "S"+id;
+            if (length < 2) {
+                return "S00" + id;
+            } else {
+                if (length < 3) {
+                    return "S0" + id;
+                } else {
+                    return "S" + id;
                 }
             }
         }
         return "S001";
-    }*/
-
-    public void btnUpdateStockOnAction(ActionEvent actionEvent) throws SQLException {
-            String SupplierId = txtSupplierID.getText();
-            String ItemName = txtItemName.getText();
-            String CatogaryName = txtProduct.getText();
-            String QTY = txtQTY.getText();
-
-            var stock = new StockDTO(SupplierId,ItemName,CatogaryName,QTY);
-
-            List<stockDetailsDTO> StList = new ArrayList<>();
-
-            for (int i = 0; i < txtQTY.getText().length(); i++) {
-                SupplierTm tm = stList.get(i);
-                stockDetailsDTO stockDetailsDTO = new stockDetailsDTO(
-                        tm.getSupplierId(),
-                        tm.getQTY(),
-                        tm.getItemPrice()
-                );
-                StList.add(stockDetailsDTO);
-            }
-            PlaceStock ps = new PlaceStock(stock, StList);
-
-            boolean isUpdateSupplier = PlaceStockRepo.placeStock(ps);
-
-            if (isUpdateSupplier) {
-                new Alert(Alert.AlertType.INFORMATION, "Stock Updated Successfully").show();
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Stock Not Updated").show();
-            }
-
     }
 
-    public void btnAddToCartOnAction(ActionEvent actionEvent) {
-        String SupplierId = txtSupplierID.getText();
-        String SupplierName = txtSupplierName.getText();
-        String Contact = txtContact.getText();
-        String Product = txtProduct.getText();
-        int Qty = Integer.parseInt(txtQTY.getText());
-        int ItemPrice = Integer.parseInt(txtItemPrice.getText());
-        int TotalPrice = Qty * ItemPrice;
-        JFXButton Remove = new JFXButton("Remove");
-        Remove.setCursor(Cursor.HAND);
-
-        Remove.setOnAction((e) -> {
-            ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-            ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-            Optional<ButtonType> type = new Alert(Alert.AlertType.INFORMATION,"Are you sure to remove", yes, no).showAndWait();
-            if (type.isPresent() && type.get() == yes) {
-                int SelectIndex = tblSupplier.getSelectionModel().getSelectedIndex();
-                stList.remove(SelectIndex);
-
-                tblSupplier.refresh();
-                CalculateNetTotal();
-            }
-        });
-        if (!stList.isEmpty()) {
-            for (int i = 0; i < tblSupplier.getItems().size(); i++){
-                if (SupplierId.equals(tblSupplierID.getCellData(i))) {
-
-                    Qty = Qty + (int) tblQTY.getCellData(i);
-                    TotalPrice += Qty * ItemPrice;
-
-                    stList.get(i).setQTY(Qty);
-                    stList.get(i).setItemPrice(TotalPrice);
-
-                    tblSupplier.refresh();
-
-                    CalculateNetTotal();
-
-                    return;
-                }
-            }
-        }
-        SupplierTm tm = new SupplierTm(SupplierId,SupplierName,Contact,Product,Qty,ItemPrice,Remove);
-        stList.add(tm);
-    }
-
-    private void CalculateNetTotal() {
-        double netTotal = 0.0;
-        for (int i = 0; i <tblSupplier.getItems().size(); i++) {
-            netTotal = netTotal + (double) tblItemPrice.getCellData(i);
-        }
-        lblNetTotal.setText(String.valueOf(netTotal));
-    }
 }

@@ -2,7 +2,6 @@ package lk.gsbp.repository;
 
 import lk.gsbp.db.DbConnection;
 import lk.gsbp.model.StockDTO;
-import lk.gsbp.model.stockDetailsDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,7 +65,7 @@ public class StockRepo {
         return pstm.executeUpdate() > 0;
     }
 
-    public static boolean update(List<stockDetailsDTO> stList) throws SQLException {
+    /*public static boolean update(List<stockDetailsDTO> stList) throws SQLException {
         for (stockDetailsDTO st : stList) {
             boolean isUpdateQty = UpdateQty(st.getStockId(), String.valueOf(st.getQTY()));
             if (!isUpdateQty) {
@@ -74,9 +73,9 @@ public class StockRepo {
             }
         }
         return true;
-    }
+    }*/
 
-    private static boolean UpdateQty(String StockId, String QTY) throws SQLException {
+    /*private static boolean UpdateQty(String StockId, String QTY) throws SQLException {
         String sql = "UPDATE stock SET QTY = (QTY + ?) WHERE StockId = ?";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -85,7 +84,7 @@ public class StockRepo {
         pstm.setString(2, StockId);
 
         return pstm.executeUpdate() > 0;
-    }
+    }*/
 
 
     public static boolean save(StockDTO stockDTO) throws SQLException {

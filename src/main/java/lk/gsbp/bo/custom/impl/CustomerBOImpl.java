@@ -15,8 +15,8 @@ public class CustomerBOImpl implements CustomerBO {
 
     @Override
     public List<CustomerDTO> getAllCustomer() throws SQLException {
-        List<CustomerDTO> allCustomers = new ArrayList();
         List<Customer> all = customerDAO.getAll();
+        List<CustomerDTO> allCustomers = new ArrayList();
 
         for (Customer customer : all){
             allCustomers.add(new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress(), customer.getContact(), customer.getEmail()));
@@ -27,7 +27,7 @@ public class CustomerBOImpl implements CustomerBO {
     @Override
     public List<CustomerDTO> getCustomerIds() throws SQLException {
         List<CustomerDTO> allCustomers = new ArrayList();
-        List<Customer> all = customerDAO.getAll();
+        List<Customer> all = customerDAO.getIds();
 
         for (Customer customer : all){
             allCustomers.add(new CustomerDTO(customer.getCustomerId(), customer.getName(), customer.getAddress(), customer.getContact(), customer.getEmail()));
@@ -46,8 +46,9 @@ public class CustomerBOImpl implements CustomerBO {
     }
 
     @Override
-    public Customer searchByCustomerId(String customerId) throws SQLException {
-        return customerDAO.searchById(customerId);
+    public CustomerDTO searchByCustomerId(String customerId) throws SQLException {
+        Customer customer = customerDAO.searchById(customerId);
+        return new CustomerDTO(customer.getCustomerId(),customer.getName(),customer.getAddress(),customer.getContact(),customer.getEmail());
     }
 
     @Override

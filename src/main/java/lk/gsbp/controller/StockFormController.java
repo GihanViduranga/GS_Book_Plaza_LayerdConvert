@@ -15,7 +15,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.StockBO;
+import lk.gsbp.dao.SQLUtil;
+import lk.gsbp.dao.custom.StockDAO;
+import lk.gsbp.dao.custom.impl.StockDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Stock;
 import lk.gsbp.model.StockDTO;
 import lk.gsbp.tm.StockTm;
 import lk.gsbp.repository.StockRepo;
@@ -52,6 +58,8 @@ public class StockFormController {
     @FXML
     private TextField txtItemName;
 
+    StockBO stockBO = (StockBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.STOCK);
+
     public void initialize()  {
         setCellValueFactory();
         loadAllStocks();
@@ -61,7 +69,7 @@ public class StockFormController {
         ObservableList<StockTm> StockList = FXCollections.observableArrayList();
 
         try {
-            List<StockDTO> stockDTOList = StockRepo.getAll();
+            List<StockDTO> stockDTOList = stockBO.getAll();
 
             for (StockDTO stockDTO : stockDTOList) {
                 StockTm stockTm = new StockTm(
@@ -112,15 +120,8 @@ public class StockFormController {
     void btnDeleteOnAction(ActionEvent event) throws SQLException {
         String Id = txtStokeId.getText();
 
-        String sql = "DELETE FROM Stock WHERE StockId =?";
-
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,Id);
-
-            boolean isDeleted = pstm.executeUpdate() > 0;
+            boolean isDeleted = stockBO.delete(Id);
             if (isDeleted){
                 new Alert(Alert.AlertType.INFORMATION, "Stock Deleted Successfully").show();
             }
@@ -137,25 +138,15 @@ public class StockFormController {
         String catogaryName = txtCatogaryName.getText();
         String QTY = txtQTY.getText();
 
-        String sql = "INSERT INTO Stock VALUES (?,?,?,?)";
-
-        try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,stockId);
-            pstm.setString(2,itemName);
-            pstm.setString(3,catogaryName);
-            pstm.setString(4,QTY);
-
-
-            boolean isSaved = pstm.executeUpdate() > 0;
+            boolean isSaved = false;
+            try {
+                isSaved = stockBO.save(new StockDTO(stockId,itemName,catogaryName,QTY));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if (isSaved) {
                 new Alert(Alert.AlertType.INFORMATION, "Stock Saved Successfully").show();
             }
-        } catch (SQLException e) {
-            new Alert(Alert.AlertType.ERROR, e.getMessage()).show();
-        }
         }else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Validation Error");
@@ -172,10 +163,8 @@ public class StockFormController {
         String catogaryName = txtCatogaryName.getText();
         String QTY = txtQTY.getText();
 
-        String sql = "UPDATE Stock SET ItemName =?, CatogaryName =?, QTY =? WHERE StockId =?";
-
         try {
-            boolean isUpdate = StockRepo.update2(StockId,itemName,catogaryName,QTY);
+            boolean isUpdate = stockBO.update(new StockDTO(StockId,itemName,catogaryName,QTY));
             if (isUpdate) {
                 new Alert(Alert.AlertType.INFORMATION, "Stock Updated Successfully").show();
             }else {
@@ -189,24 +178,13 @@ public class StockFormController {
     public void txtStockeSearchOnAction(ActionEvent actionEvent) throws SQLException {
         String Id = txtStokeId.getText();
 
-        String sql = "SELECT * FROM Stock WHERE StockId =?";
-
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
+            StockDTO stock = stockBO.searchById(Id);
 
-            pstm.setString(1, Id);
-
-            ResultSet resultSet = pstm.executeQuery();
-
-            if (resultSet.next()) {
-                String catagaryName = resultSet.getString(2);
-                String QTY = resultSet.getString(3);
-                String itemName = resultSet.getString(4);
-
-                txtCatogaryName.setText(resultSet.getString("CatogaryName"));
-                txtQTY.setText(resultSet.getString("QTY"));
-                txtItemName.setText(resultSet.getString("ItemName"));
+            if (stock != null) {
+                txtCatogaryName.setText(stock.getCatogaryName());
+                txtQTY.setText(stock.getQTY());
+                txtItemName.setText(stock.getItemName());
             } else {
                 new Alert(Alert.AlertType.ERROR, "Stock not found").show();
             }

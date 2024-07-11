@@ -1,19 +1,16 @@
-package lk.gsbp.repository;
+package lk.gsbp.model;
 
-import lk.gsbp.model.OrderDTO;
-import lk.gsbp.model.orderDetailsDTO;
 import lombok.*;
 
 import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 
-public class PlaceOrder {
+public class PlaceOrderDTO {
     private OrderDTO orderDTO;
     private List<orderDetailsDTO> odList;
-
-
 }

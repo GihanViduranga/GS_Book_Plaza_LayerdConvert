@@ -106,21 +106,19 @@
             <Font size="18.0" />
          </font>
       </TextField>
-      <TableView fx:id="tblSupplier" layoutX="55.0" layoutY="469.0" prefHeight="468.0" prefWidth="1169.0">
+      <TableView fx:id="tblSupplier" layoutX="255.0" layoutY="467.0" prefHeight="468.0" prefWidth="882.0">
         <columns>
-          <TableColumn fx:id="tblSupplierID" prefWidth="105.99996948242188" text="Supplier ID" />
-          <TableColumn fx:id="tblSupplierName" prefWidth="236.0" text="Supplier Name" />
-            <TableColumn fx:id="tblContact" prefWidth="188.0" text="Contact" />
-            <TableColumn fx:id="tblProduct" prefWidth="255.0" text="Product" />
-            <TableColumn fx:id="tblQTY" prefWidth="94.0" text="QTY" />
-            <TableColumn fx:id="tblItemPrice" prefWidth="176.0" text="Item Price" />
-            <TableColumn fx:id="tblRemove" prefWidth="113.0" text="Remove" />
+          <TableColumn fx:id="colSupplierID" prefWidth="105.99996948242188" text="Supplier ID" />
+          <TableColumn fx:id="colSupplierName" prefWidth="236.0" text="Supplier Name" />
+            <TableColumn fx:id="colContact" prefWidth="188.0" text="Contact" />
+            <TableColumn fx:id="colProduct" prefWidth="255.0" text="Product" />
+            <TableColumn fx:id="colQTY" prefWidth="94.0" text="QTY" />
         </columns>
          <effect>
             <DropShadow />
          </effect>
       </TableView>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="633.0" onAction="#btnSaveOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Save" textFill="WHITE">
+      <JFXButton buttonType="RAISED" layoutX="1255.0" layoutY="550.0" onAction="#btnSaveOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Save" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -138,7 +136,7 @@
             <DropShadow />
          </effect>
       </JFXButton>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="718.0" onAction="#btnClearOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Clear" textFill="WHITE">
+      <JFXButton buttonType="RAISED" layoutX="1255.0" layoutY="635.0" onAction="#btnClearOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Clear" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -156,7 +154,7 @@
             <DropShadow />
          </effect>
       </JFXButton>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="802.0" onAction="#btnUpdateOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Update" textFill="WHITE">
+      <JFXButton buttonType="RAISED" layoutX="1255.0" layoutY="719.0" onAction="#btnUpdateOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Update" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -174,7 +172,7 @@
             <DropShadow />
          </effect>
       </JFXButton>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="889.0" onAction="#btnDeleteOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Delete" textFill="WHITE">
+      <JFXButton buttonType="RAISED" layoutX="1255.0" layoutY="806.0" onAction="#btnDeleteOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Delete" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
@@ -224,67 +222,10 @@
             <Font size="18.0" />
          </font>
       </TextField>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="552.0" onAction="#btnUpdateStockOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Update Stock" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fitHeight="37.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Icons/icons8-update-100.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <effect>
-            <DropShadow />
-         </effect>
-      </JFXButton>
-      <Text fill="WHITE" layoutX="131.0" layoutY="394.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Item Price">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Text>
-      <TextField fx:id="txtItemPrice" layoutX="131.0" layoutY="403.0" prefHeight="35.0" prefWidth="287.0" promptText="Item Price">
-         <effect>
-            <DropShadow />
-         </effect>
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor>
-         <font>
-            <Font size="18.0" />
-         </font>
-      </TextField>
-      <Text fill="WHITE" layoutX="586.0" layoutY="429.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Net Total :">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Text>
       <Label fx:id="lblNetTotal" layoutX="688.0" layoutY="403.0" prefHeight="39.0" prefWidth="210.0" textFill="WHITE">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <JFXButton buttonType="RAISED" layoutX="1254.0" layoutY="467.0" onAction="#btnAddToCartOnAction" prefHeight="50.0" prefWidth="228.0" style="-fx-background-color: #1e90ff;" text="Add To Cart" textFill="WHITE">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-         <graphic>
-            <ImageView fitHeight="37.0" fitWidth="56.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../Icons/icons8-add-to-cart-100.png" />
-               </image>
-            </ImageView>
-         </graphic>
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-         <effect>
-            <DropShadow />
-         </effect>
-      </JFXButton>
    </children>
 </AnchorPane>

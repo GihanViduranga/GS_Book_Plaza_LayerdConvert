@@ -13,15 +13,23 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.CustomerBO;
+import lk.gsbp.bo.custom.ItemBO;
+import lk.gsbp.bo.custom.PlaceOrderBO;
+import lk.gsbp.bo.custom.impl.ItemBOImpl;
+import lk.gsbp.bo.custom.impl.PlaceOrderBOImpl;
+import lk.gsbp.dao.SQLUtil;
+import lk.gsbp.dao.custom.OrderDAO;
 import lk.gsbp.dao.custom.impl.CustomerDAOImpl;
+import lk.gsbp.dao.custom.impl.ItemDAOImpl;
+import lk.gsbp.dao.custom.impl.OrderDAOImpl;
 import lk.gsbp.db.DbConnection;
 import lk.gsbp.entity.Customer;
-import lk.gsbp.model.CustomerDTO;
-import lk.gsbp.model.ItemDTO;
-import lk.gsbp.model.OrderDTO;
+import lk.gsbp.entity.Item;
+import lk.gsbp.model.*;
 import lk.gsbp.tm.CartTm;
 import lk.gsbp.repository.*;
-import lk.gsbp.model.orderDetailsDTO;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
@@ -29,7 +37,6 @@ import net.sf.jasperreports.view.JasperViewer;
 
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 
 import java.sql.SQLException;
@@ -93,6 +100,10 @@ public class OrderFormController {
 
     private ObservableList<CartTm> obList = FXCollections.observableArrayList();
 
+    PlaceOrderBO placeOrderBO = (PlaceOrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PLACEORDER);
+    ItemBO itemBO = (ItemBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.ITEM);
+    CustomerBO customerBO = (CustomerBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.CUSTOMER);
+
     public void initialize(){
         setCellValueFactory();
         getCurrentOrderId();
@@ -114,7 +125,7 @@ public class OrderFormController {
 
     private void getCurrentOrderId() {
         try {
-            String orderId = OrderRepo.GetOrderId();
+            String orderId = placeOrderBO.getOrderIds();
 
             String nextOrderId = generateNextAssestId();
             lblOrderID.setText(nextOrderId);
@@ -123,11 +134,7 @@ public class OrderFormController {
         }
     }
     public static String generateNextAssestId() throws SQLException {
-        Connection con = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT OrderId FROM orders ORDER BY OrderId DESC LIMIT 1";
-
-        ResultSet resultSet = con.createStatement().executeQuery(sql);
+        ResultSet resultSet = SQLUtil.execute("SELECT OrderId FROM orders ORDER BY OrderId DESC LIMIT 1");
         if(resultSet.next()) {
             return splitOrderId(resultSet.getString(1));
         }
@@ -157,9 +164,10 @@ public class OrderFormController {
     private void setItemID() {
         ObservableList<String> oblist = FXCollections.observableArrayList();
         try {
-            List<String> itemList = ItemRepo.getItemID();
-            for (String item : itemList) {
-                oblist.add(item);
+
+            List<ItemDTO> itemList = itemBO.getItemIds();
+            for (ItemDTO item : itemList) {
+                oblist.add(item.getItemsId());
             }
             cmbItemID.setItems(oblist);
         } catch (SQLException e) {
@@ -241,23 +249,11 @@ public class OrderFormController {
     }
 
     @FXML
-    void btnBackOnAction(ActionEvent event) throws IOException {
-        AnchorPane rootNode = FXMLLoader.load(getClass().getResource("/View/dashboard_form.fxml"));
-        Stage stage = (Stage) root.getScene().getWindow();
-
-        stage.setScene(new Scene(rootNode));
-        stage.setTitle("Gs Book Plaza Dashboard");
-        stage.centerOnScreen();
-    }
-
-    @FXML
     void btnPlaceOrderOnAction(ActionEvent event) throws SQLException, JRException {
         String orderId = lblOrderID.getText();
         String orderDate = lblOrderDate.getText();
         String customerId = cmbCustomerID.getValue();
         double total = Double.parseDouble(lblNetTotal.getText());
-
-        System.out.println(total);
 
         var order = new OrderDTO(orderId, orderDate, customerId, total);
 
@@ -273,12 +269,11 @@ public class OrderFormController {
                     tm.getUnitPrice());
             odList.add(orderDetailsDTO);
         }
-        PlaceOrder po = new PlaceOrder(order, odList);
-        boolean isPlaceOrder = PlaceOrderRepo.placeOrder(po);
+        PlaceOrderDTO po = new PlaceOrderDTO(order, odList);
+        boolean isPlaceOrder = placeOrderBO.placeOrder(po);
 
         if(isPlaceOrder){
             new Alert(Alert.AlertType.CONFIRMATION, "Order pleased").show();
-            PrintBill();
         } else {
             new Alert(Alert.AlertType.ERROR, "Order pleased Unsuccessful").show();
         }
@@ -292,7 +287,7 @@ public class OrderFormController {
         String customerId = cmbCustomerID.getValue();
 
         try {
-            Customer customer = new CustomerDAOImpl().searchById(customerId);
+            CustomerDTO customer = customerBO.searchByCustomerId(customerId);
             if (customer != null) {
                 lblCustomerName.setText(customer.getName());
             }
@@ -305,12 +300,11 @@ public class OrderFormController {
         ObservableList<String> custIdList = FXCollections.observableArrayList();
 
         try{
-            List<Customer> idList = new CustomerDAOImpl().getIds();
+            List<CustomerDTO> idList =customerBO.getCustomerIds();
 
-            for (Customer customer : idList) {
+            for (CustomerDTO customer : idList) {
                 custIdList.add(customer.getCustomerId());
             }
-
             cmbCustomerID.setItems(custIdList);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -321,11 +315,11 @@ public class OrderFormController {
         String Id = cmbItemID.getValue();
 
         try {
-            ItemDTO itemDTO = ItemRepo.searchById(Id);
-            if (itemDTO != null) {
-                lblItemName.setText(itemDTO.getItemName());
-                lblUnitPrice.setText(String.valueOf(itemDTO.getUnitPrice()));
-                lblQuentityOnHand.setText(String.valueOf(itemDTO.getQTY()));
+            ItemDTO item = itemBO.searchByItemId(Id);
+            if (item != null) {
+                lblItemName.setText(item.getItemName());
+                lblUnitPrice.setText(String.valueOf(item.getUnitPrice()));
+                lblQuentityOnHand.setText(String.valueOf(item.getQTY()));
             }
             txtQTY.requestFocus();
         } catch (SQLException e) {

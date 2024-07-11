@@ -5,6 +5,7 @@ import lk.gsbp.dao.custom.EmployeeDAO;
 import lk.gsbp.db.DbConnection;
 import lk.gsbp.entity.Employee;
 import lk.gsbp.model.EmployeeDTO;
+import lk.gsbp.model.orderDetailsDTO;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -91,5 +92,20 @@ public class EmployeeDAOImpl implements EmployeeDAO {
     @Override
     public boolean delete(String id) throws SQLException {
         return SQLUtil.execute("DELETE FROM employee WHERE EmployeeId =?",id);
+    }
+
+    @Override
+    public boolean update3(List<orderDetailsDTO> odList) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public String getOrderIds() throws SQLException {
+        return "";
+    }
+
+    @Override
+    public List<String> getAllOrder() throws SQLException {
+        return List.of();
     }
 }

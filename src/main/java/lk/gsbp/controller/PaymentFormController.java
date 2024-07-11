@@ -8,7 +8,17 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import lk.gsbp.Utill.Regex;
+import lk.gsbp.bo.BOFactory;
+import lk.gsbp.bo.custom.PaymentBO;
+import lk.gsbp.bo.custom.PlaceOrderBO;
+import lk.gsbp.bo.custom.impl.PlaceOrderBOImpl;
+import lk.gsbp.dao.DAOFactory;
+import lk.gsbp.dao.SQLUtil;
+import lk.gsbp.dao.custom.impl.OrderDAOImpl;
+import lk.gsbp.dao.custom.impl.PaymentDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Order;
+import lk.gsbp.entity.Payment;
 import lk.gsbp.model.OrderDTO;
 import lk.gsbp.model.PaymentDTO;
 import lk.gsbp.tm.PaymentTm;
@@ -55,6 +65,10 @@ public class PaymentFormController {
     @FXML
     private TableColumn<?, ?> colPayment;
 
+   // PaymentDAOImpl paymentDAO = (PaymentDAOImpl) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT);
+    PaymentBO paymentBO = (PaymentBO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.PAYMENT);
+    PlaceOrderBO placeOrderBO = (PlaceOrderBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.PLACEORDER);
+
     @FXML
     void btnPayClearOnAction(ActionEvent event) {
         ClearFields();
@@ -85,7 +99,7 @@ public class PaymentFormController {
         ObservableList<PaymentTm> Object = FXCollections.observableArrayList();
 
         try {
-            List<PaymentDTO> payList = PaymentRepo.getAllPayments();
+            List<PaymentDTO> payList = paymentBO.getAllPayment();
 
             for (PaymentDTO paymentDTO : payList) {
                 PaymentTm paymentTm = new PaymentTm(
@@ -106,16 +120,8 @@ public class PaymentFormController {
     void btnPayDeleteOnAction(ActionEvent event) {
         String Id = txtPaymentId.getText();
 
-        String sql = "DELETE FROM payment WHERE PaymentId =?";
-
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
-
-            pstm.setString(1,Id);
-
-            boolean isDeleted = pstm.executeUpdate() > 0;
-
+            boolean isDeleted = paymentBO.deletePayment(Id);
             if(isDeleted){
                 new Alert(Alert.AlertType.INFORMATION, "Payment Deleted Successfully").show();
             }
@@ -127,26 +133,14 @@ public class PaymentFormController {
     public void txtPaymentSearchOnAction(ActionEvent actionEvent) {
         String id = txtPaymentId.getText();
 
-        String sql = "SELECT * FROM payment WHERE PaymentId =?";
-
         try {
-            Connection connection = DbConnection.getInstance().getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
+            PaymentDTO payment = paymentBO.searchPaymentById(id);
 
-            pstm.setString(1,id);
-
-            ResultSet resultSet = pstm.executeQuery();
-
-            if(resultSet.next()){
-                String PaymentId = resultSet.getString(1);
-                String PaymentMethod = resultSet.getString(2);
-                String Date = resultSet.getString(3);
-                String Payment = resultSet.getString(4);
-
-                txtPaymentId.setText(PaymentId);
-                txtPaymentMethod.setText(PaymentMethod);
-                lblDate.setText(Date);
-                txtPayment.setText(Payment);
+            if(payment != null){
+                txtPaymentId.setText(payment.getPaymentId());
+                txtPaymentMethod.setText(payment.getPaymentMethod());
+                lblDate.setText(payment.getDate());
+                txtPayment.setText(payment.getPayment());
             } else {
                 new Alert(Alert.AlertType.ERROR, "Payment not found").show();
             }
@@ -185,9 +179,7 @@ public class PaymentFormController {
         String Date = lblDate.getText();
         String Payment = txtPayment.getText();
 
-        PaymentRepo paymentRepo = new PaymentRepo();
-
-        boolean isSaved = paymentRepo.save(PaymentId,PaymentMethod,Date,Payment);
+        boolean isSaved = paymentBO.savePayment(new PaymentDTO(PaymentId, PaymentMethod, Date, Payment));
 
         if(isSaved){
             new Alert(Alert.AlertType.INFORMATION, "Payment Saved Successfully").show();
@@ -207,7 +199,7 @@ public class PaymentFormController {
         ObservableList<String> OrderIdList = FXCollections.observableArrayList();
 
         try {
-            List<String> orderList = OrderRepo.getAllOrders();
+            List<String> orderList = placeOrderBO.getAllOrder();
             for (String order : orderList) {
                 OrderIdList.add(order);
             }
@@ -221,9 +213,9 @@ public class PaymentFormController {
         String id = cmbOrderId.getValue();
 
         try {
-            OrderDTO orderDTO = OrderRepo.searchById(id);
-            if (orderDTO != null) {
-                txtPayment.setText(String.valueOf(orderDTO.getNetTotal()));
+            OrderDTO order = placeOrderBO.searchById(id);
+            if (order != null) {
+                txtPayment.setText(String.valueOf(order.getNetTotal()));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -231,7 +223,7 @@ public class PaymentFormController {
     }
     private void getCurrentOrderId() {
         try {
-            String PaymentId = PaymentRepo.GetPaymentId();
+            String PaymentId = paymentBO.GetPaymentId();
 
             String nextPaymentId = generateNextAssestId();
             txtPaymentId.setText(nextPaymentId);
@@ -240,11 +232,7 @@ public class PaymentFormController {
         }
     }
     public static String generateNextAssestId() throws SQLException {
-        Connection con = DbConnection.getInstance().getConnection();
-
-        String sql = "SELECT PaymentId FROM payment ORDER BY PaymentId DESC LIMIT 1";
-
-        ResultSet resultSet = con.createStatement().executeQuery(sql);
+        ResultSet resultSet = SQLUtil.execute("SELECT PaymentId FROM payment ORDER BY PaymentId DESC LIMIT 1");
         if(resultSet.next()) {
             return splitItemId(resultSet.getString(1));
         }

@@ -4,6 +4,7 @@ import lk.gsbp.dao.SQLUtil;
 import lk.gsbp.dao.custom.CustomerDAO;
 import lk.gsbp.entity.Customer;
 import lk.gsbp.model.CustomerDTO;
+import lk.gsbp.model.orderDetailsDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -85,6 +86,7 @@ public class CustomerDAOImpl implements CustomerDAO {
         //return pstm.executeUpdate() > 0;
         return SQLUtil.execute("UPDATE customer SET Name =?, Address =?, Contact =?, Email =? WHERE CustomerId =?",customer.getName(),customer.getAddress(),customer.getContact(),customer.getEmail(),customer.getCustomerId());
     }
+
     @Override
     public Customer searchById(String customerId) throws SQLException {
         /*String sql = "SELECT * FROM customer WHERE CustomerId = ?";
@@ -138,5 +140,20 @@ public class CustomerDAOImpl implements CustomerDAO {
         pstm.setString(1,id);
         return pstm.executeUpdate() > 0;*/
         return SQLUtil.execute("DELETE FROM customer WHERE CustomerId =?",id);
+    }
+
+    @Override
+    public boolean update3(List<orderDetailsDTO> odList) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public String getOrderIds() throws SQLException {
+        return "";
+    }
+
+    @Override
+    public List<String> getAllOrder() throws SQLException {
+        return List.of();
     }
 }

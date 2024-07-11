@@ -1,5 +1,7 @@
 package lk.gsbp.dao;
 
+import lk.gsbp.model.orderDetailsDTO;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,4 +13,7 @@ public interface CrudDAO<T> extends SuperDAO{
     public T searchById(String Id) throws SQLException;
     public boolean save(T entity) throws SQLException;
     public boolean delete(String id) throws SQLException;
+    public boolean update3(List<orderDetailsDTO> odList) throws SQLException;
+    public String getOrderIds() throws SQLException;
+    public  List<String> getAllOrder() throws SQLException;
 }

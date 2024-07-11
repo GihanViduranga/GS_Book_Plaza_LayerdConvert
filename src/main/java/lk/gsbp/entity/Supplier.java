@@ -1,4 +1,4 @@
-package lk.gsbp.model;
+package lk.gsbp.entity;
 
 import lombok.*;
 
@@ -8,11 +8,14 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SupplierDTO {
+public class Supplier {
         private String SupplierId;
         private String SuppName;
         private String Contact;
         private String Product;
         private String ItemName;
         private String Qty;
+
+        public Supplier(String supplierId, String suppName, String contact, String product, String qty) {
+        }
 }

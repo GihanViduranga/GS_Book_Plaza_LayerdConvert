@@ -64,12 +64,12 @@ public class ItemDAOImpl implements ItemDAO {
 
     @Override
     public boolean update(Item entity) throws SQLException {
-        return SQLUtil.execute("UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId =? WHERE ItemsId =?",entity.getItemName(),entity.getQTY(),entity.getUnitPrice(),entity.getItemsId(),entity.getStockId());
+        return SQLUtil.execute("UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId =? WHERE ItemsId =?",entity.getItemName(),entity.getQTY(),entity.getUnitPrice(),entity.getStockId(),entity.getItemsId());
     }
 
     @Override
     public boolean update2(Item entity) throws SQLException {
-        return SQLUtil.execute("UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId = ? WHERE ItemsId =?",entity.getItemName(),entity.getQTY(),entity.getUnitPrice(),entity.getItemsId(),entity.getStockId());
+        return SQLUtil.execute("UPDATE Items SET ItemName =?, QTY =?, UnitPrice =?,StockId = ? WHERE ItemsId =?",entity.getItemName(),entity.getQTY(),entity.getUnitPrice(),entity.getStockId(),entity.getItemsId());
     }
 
     @Override
@@ -94,7 +94,7 @@ public class ItemDAOImpl implements ItemDAO {
     public boolean delete(String id) throws SQLException {
         return SQLUtil.execute("DELETE FROM Items WHERE ItemsId =?",id);
     }
-
+    @Override
     public boolean update3(List<orderDetailsDTO> odList) throws SQLException {
         for (orderDetailsDTO od : odList) {
             boolean isUpdateQty = updateQty(od.getItemId(), od.getQty());
@@ -105,7 +105,17 @@ public class ItemDAOImpl implements ItemDAO {
         return true;
     }
 
-    private boolean updateQty(String itemCode, int qty) throws SQLException {
+    @Override
+    public String getOrderIds() throws SQLException {
+        return "";
+    }
+
+    @Override
+    public List<String> getAllOrder() throws SQLException {
+        return List.of();
+    }
+
+    public boolean updateQty(String itemCode, int qty) throws SQLException {
         String sql = "UPDATE items SET QTY = (QTY - ?) WHERE ItemsId = ?";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);

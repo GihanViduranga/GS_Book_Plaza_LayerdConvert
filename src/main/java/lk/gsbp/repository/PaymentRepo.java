@@ -1,6 +1,8 @@
 package lk.gsbp.repository;
 
+import lk.gsbp.dao.custom.impl.PaymentDAOImpl;
 import lk.gsbp.db.DbConnection;
+import lk.gsbp.entity.Payment;
 import lk.gsbp.model.PaymentDTO;
 
 import java.sql.Connection;
@@ -11,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentRepo {
-    public static boolean update(PaymentDTO paymentDTO) throws SQLException {
-        String sql = "UPDATE Payment SET PaymentMethod = ?, Date = ?, Payment = ? WHERE PaymentId = ?";
+    public static boolean update(Payment payment) throws SQLException {
+        /*String sql = "UPDATE Payment SET PaymentMethod = ?, Date = ?, Payment = ? WHERE PaymentId = ?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -23,10 +25,12 @@ public class PaymentRepo {
         pstm.setObject(4, paymentDTO.getPayment());
 
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+        return paymentDAO.update2(new Payment(payment.getPaymentId(), payment.getPaymentMethod(), payment.getDate(), payment.getPayment()));
     }
     public static boolean update2(String PaymentId, String PaymentMethod, String Date,String Payment) throws SQLException {
-        String sql = "UPDATE Payment SET PaymentMethod = ?, Date = ?, Payment = ? WHERE PaymentId = ?";
+        /*String sql = "UPDATE Payment SET PaymentMethod = ?, Date = ?, Payment = ? WHERE PaymentId = ?";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
@@ -37,11 +41,13 @@ public class PaymentRepo {
         pstm.setObject(4, Payment);
 
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+        return paymentDAO.update2(new Payment(PaymentId, PaymentMethod, Date, Payment));
     }
 
-    public static List<PaymentDTO> getAllPayments() throws SQLException {
-        String sql = "SELECT * FROM payment";
+    public static List<Payment> getAllPayments() throws SQLException {
+        /*String sql = "SELECT * FROM payment";
 
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
         ResultSet resultSet = pstm.executeQuery();
@@ -57,11 +63,13 @@ public class PaymentRepo {
             PaymentDTO paymentDTO = new PaymentDTO(PaymentId, PaymentMethod, Date, Payment);
             paymentDTOS.add(paymentDTO);
         }
-        return paymentDTOS;
+        return paymentDTOS;*/
+        PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+        return paymentDAO.getAll();
     }
 
     public static String GetPaymentId() throws SQLException {
-        String sql = "SELECT PaymentId FROM payment ORDER BY PaymentId DESC LIMIT 1";
+        /*String sql = "SELECT PaymentId FROM payment ORDER BY PaymentId DESC LIMIT 1";
         PreparedStatement pstm = DbConnection.getInstance().getConnection().prepareStatement(sql);
 
         ResultSet resultSet = pstm.executeQuery();
@@ -70,12 +78,13 @@ public class PaymentRepo {
             String PaymentId = resultSet.getString(1);
             return PaymentId;
         }
-        return null;
-
+        return null;*/
+        PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+        return paymentDAO.GetPaymentId();
     }
 
     public boolean save(String paymentId, String paymentMethod, String date, String payment) throws SQLException {
-        String sql = "INSERT INTO payment VALUES (?,?,?,?)";
+        /*String sql = "INSERT INTO payment VALUES (?,?,?,?)";
 
         Connection connection = DbConnection.getInstance().getConnection();
         PreparedStatement pstm = connection.prepareStatement(sql);
@@ -85,6 +94,8 @@ public class PaymentRepo {
         pstm.setString(3, date);
         pstm.setString(4, payment);
 
-        return pstm.executeUpdate() > 0;
+        return pstm.executeUpdate() > 0;*/
+        PaymentDAOImpl paymentDAO = new PaymentDAOImpl();
+        return paymentDAO.save(new Payment(paymentId, paymentMethod, date, payment));
     }
 }
